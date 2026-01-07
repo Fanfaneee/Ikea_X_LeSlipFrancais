@@ -160,7 +160,7 @@ export default function MapScreen() {
                             <Ionicons name="close-circle" size={22} color="#888" />
                         </TouchableOpacity>
                     )}
-                    query={{ key: 'AIzaSyBLXMKxW23Jzbqj8V3E7IQi_lJ0i1c8vek', language: 'fr', components: 'country:fr' }}
+                    query={{ key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY, language: 'fr', components: 'country:fr' }}
                     styles={{ container: { flex: 0 }, textInput: styles.searchBar }}
                     enablePoweredByContainer={false}
                 />
