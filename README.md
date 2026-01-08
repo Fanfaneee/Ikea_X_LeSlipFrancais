@@ -20,7 +20,7 @@ Le projet repose sur une architecture client-serveur robuste pour garantir la sy
    <img src="assets/images/page_accueil.jpg" width="300" alt="Page Accueil" />  
    <img src="assets/images/page_chatbot.jpg" width="300" alt="Page ChatBot" />
    <img src="assets/images/page_profil.jpg" width="300" alt="Page Profil" />
-   <img src="assets/images/page_avantage.jpg" width="300" alt="Page Avantage" />
+   <img src="assets/images/page_avantage_vide.jpg" width="300" alt="Page Avantage" />
    <img src="assets/images/page_avantage_full.jpg" width="300" alt="Page Avantages" />
    <img src="assets/images/page_map.jpg" width="300" alt="Page Map" />
    <img src="assets/images/page_map_ikea.jpg" width="300" alt="Page Map " />
