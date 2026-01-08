@@ -2,6 +2,17 @@
 
 Bienvenue sur le dépôt de la collaboration **IKEA x Le Slip Français**. Ce projet est un projet **étudiant**. Il est donc **fictif** et aucune des deux marques ci dessus n'a été impliqué. Cette application mobile, développée avec **Expo** et **React Native**, permet aux utilisateurs de suivre les dépôts de tissus qu'ils ont fait, en gagnant des bons d'achat pour le prochains pop-Up Store.
 
+##  Architecture Backend & Serveur
+
+Le projet repose sur une architecture client-serveur robuste pour garantir la synchronisation des données :
+
+* **Hébergement API** : Toutes les routes d'authentification, de gestion des utilisateurs et des statistiques sont hébergées sur un serveur distant (lemerovingien.fr).
+* **Base de Données** : Une base de données MySQL centralise les informations (comptes utilisateurs, poids total déposé, informations de profil).
+* **Technologies Backend** : 
+  * **PHP** : Pour le traitement des requêtes et la logique métier.
+  * **JSON** : Format d'échange standard entre l'application mobile et le serveur.
+* **Sécurité des Sessions** : L'ID utilisateur récupéré via l'API est stocké localement de manière sécurisée pour maintenir la session et personnaliser l'expérience (notamment pour l'historique de Sven).
+
 
 ## Screenshots
 
@@ -58,3 +69,4 @@ L'application **IKEA x Le Slip Français** combine engagement écologique et tec
 ###  Design & Expérience (UX/UI)
 * **Interface Hybride** : Un mélange des codes visuels d'IKEA (Bleu/Jaune) et du Slip Français pour une identité forte.
 * **Modal de Chat Moderne** : Une interface de discussion fluide avec auto-scroll et gestion des états de chargement ("Sven écrit...").
+
