@@ -1,10 +1,10 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { useFocusEffect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import QRCode from 'react-native-qrcode-svg'; // Import du QR Code
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+
+const { width } = Dimensions.get('window');
 
 export default function ProfileScreen() {
     const [user, setUser] = useState<any>(null);
@@ -30,50 +30,191 @@ export default function ProfileScreen() {
     if (!user) return null;
 
     return (
-        <ThemedView style={styles.container}>
-            <ThemedText type="title" style={styles.title}>Ma Carte Fidélité</ThemedText>
-
-            {/* SECTION QR CODE */}
-            <View style={styles.qrSection}>
-                <View style={styles.qrContainer}>
-                    <QRCode
-                        value={user.id.toString()} // Le QR contient l'ID
-                        size={180}
-                        color="#0058a3"
-                        backgroundColor="white"
-                    />
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                {/* HEADER TITRE ÉPURÉ */}
+                <View style={styles.header}>
+                    <Text style={styles.pageTitle}>MON PROFIL</Text>
+                    <View style={styles.titleUnderline} />
                 </View>
-                <ThemedText style={styles.qrHint}>Présentez ce code lors de votre dépôt en magasin</ThemedText>
-            </View>
 
-            {/* INFOS USER */}
-            <View style={styles.card}>
-                <ThemedText style={styles.label}>Utilisateur : <ThemedText type="defaultSemiBold">{user.prenom} {user.nom}</ThemedText></ThemedText>
-                <ThemedText style={styles.label}>ID Compte : <ThemedText type="defaultSemiBold">#{user.id}</ThemedText></ThemedText>
-            </View>
+                {/* CARTE DE MEMBRE STYLE "COLLISION" */}
+                <View style={styles.qrCard}>
+                    {/* Angle jaune signature IKEA */}
+                    <View style={styles.cornerAccent} />
 
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Se déconnecter</ThemedText>
-            </TouchableOpacity>
-        </ThemedView>
+                    <View style={styles.qrContainer}>
+                        <QRCode
+                            value={user.id.toString()}
+                            size={width * 0.45}
+                            color="#144793"
+                            backgroundColor="white"
+                        />
+                    </View>
+
+                    <View style={styles.idContainer}>
+                        <Text style={styles.idLabel}>Présenter ce QR code lors du don de vos tissus</Text>
+                    </View>
+
+                    {/* Badge Rouge LSF asymétrique mais sobre */}
+                    <View style={styles.brandBadge}>
+                        <Text style={styles.brandBadgeText}>IKEA x Le Slip Français</Text>
+                    </View>
+                </View>
+
+                {/* BLOC INFORMATIONS */}
+                <View style={styles.infoSection}>
+                    <View style={styles.infoRow}>
+                        <View style={styles.infoBox}>
+                            <Text style={styles.label}>NOM COMPLET</Text>
+                            <Text style={styles.value}>{user.prenom} {user.nom}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.infoRow}>
+                        <View style={[styles.infoBox, { borderLeftColor: '#fdd20a' }]}>
+                            <Text style={styles.label}>ADRESSE MAIL</Text>
+                            <Text style={styles.valueSmall}>{user.email}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* BOUTON DÉCONNEXION */}
+                <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+                    <Text style={styles.logoutText}>DÉCONNEXION </Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center' },
-    title: { marginBottom: 30, color: '#0058a3' },
-    qrSection: { alignItems: 'center', marginBottom: 30 },
-    qrContainer: {
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
     },
-    qrHint: { marginTop: 15, fontSize: 14, color: '#666', textAlign: 'center' },
-    card: { backgroundColor: '#f9f9f9', padding: 20, borderRadius: 15, width: '100%', marginBottom: 20 },
-    label: { fontSize: 16, marginBottom: 5, color: '#333' },
-    logoutButton: { backgroundColor: '#FF3B30', padding: 15, borderRadius: 10, width: '100%', alignItems: 'center' }
+    container: {
+        flex: 1,
+        paddingHorizontal: 25,
+    },
+    header: {
+        marginTop: 30,
+        marginBottom: 20,
+    },
+    pageTitle: {
+        fontSize: 32,
+        fontWeight: '900',
+        color: '#144793',
+        letterSpacing: -1,
+    },
+    titleUnderline: {
+        width: 60,
+        height: 8,
+        backgroundColor: '#D80D1D',
+        marginTop: 5,
+    },
+    qrCard: {
+        backgroundColor: '#144793',
+        borderRadius: 30,
+        paddingVertical: 40,
+        alignItems: 'center',
+        marginTop: 20,
+        borderBottomRightRadius: 0, // Style asymétrique moderne
+        position: 'relative',
+        overflow: 'hidden',
+        // Shadow pour iOS
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.15,
+        shadowRadius: 15,
+        // Elevation pour Android
+        elevation: 12,
+    },
+    cornerAccent: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        width: 40,
+        height: 40,
+        borderTopWidth: 10,
+        borderRightWidth: 10,
+        borderColor: '#fdd20a',
+    },
+    qrContainer: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderRadius: 20,
+    },
+    idContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    idLabel: {
+        color: '#fdd20a',
+        fontSize: 12,
+        fontWeight: '800',
+        letterSpacing: 2,
+        textAlign: 'center',
+    },
+    idNumber: {
+        color: '#FFFFFF',
+        fontSize: 24,
+        fontWeight: '900',
+    },
+    brandBadge: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        backgroundColor: '#D80D1D',
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+    },
+    brandBadgeText: {
+        color: '#FFF',
+        fontWeight: '900',
+        fontSize: 12,
+    },
+    infoSection: {
+        marginTop: 40,
+        gap: 25,
+    },
+    infoRow: {
+        flexDirection: 'row',
+    },
+    infoBox: {
+        flex: 1,
+        borderLeftWidth: 6,
+        borderLeftColor: '#144793',
+        paddingLeft: 15,
+        paddingVertical: 5,
+    },
+    label: {
+        color: '#D80D1D',
+        fontWeight: '900',
+        fontSize: 12,
+        marginBottom: 2,
+    },
+    value: {
+        fontSize: 24,
+        fontWeight: '800',
+        color: '#144793',
+    },
+    valueSmall: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#666',
+    },
+    logoutBtn: {
+        marginTop: 'auto',
+        alignSelf: 'center',
+        marginBottom: 30,
+        padding: 10,
+    },
+    logoutText: {
+        color: '#999',
+        fontWeight: '800',
+        fontSize: 12,
+        letterSpacing: 1,
+        textDecorationLine: 'underline',
+    }
 });

@@ -124,6 +124,7 @@ export default function MapScreen() {
         <View style={styles.container}>
             <MapView
                 ref={mapRef}
+                provider="google"
                 style={styles.map}
                 initialRegion={{
                     latitude: 46.2276,

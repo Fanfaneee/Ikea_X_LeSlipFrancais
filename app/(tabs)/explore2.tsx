@@ -1,8 +1,10 @@
+import HeroFooter from '@/components/HeroFooter';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import React, { useState } from 'react';
+
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 export default function AuthScreen() {
@@ -36,7 +38,7 @@ export default function AuthScreen() {
                 if (isLogin) {
                     await SecureStore.setItemAsync('user_session', JSON.stringify(res.user));
 
-                    router.replace('/profile'); // Redirection vers le profil
+                    router.replace('/'); // Redirection vers le profil
                 } else {
                     Alert.alert("Succès", "Compte créé !");
                     setIsLogin(true);
@@ -79,15 +81,18 @@ export default function AuthScreen() {
                         </TouchableOpacity>
                     </>
                 )}
+
+                <HeroFooter />
             </ScrollView>
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flexGrow: 1, justifyContent: 'center', padding: 20, gap: 10 },
-    input: { backgroundColor: '#f0f0f0', padding: 15, borderRadius: 10, marginBottom: 5, color: '#000' },
-    button: { backgroundColor: '#0058a3', padding: 15, borderRadius: 10, alignItems: 'center', marginTop: 10 },
-    buttonText: { color: '#fff', fontWeight: 'bold' },
-    link: { textAlign: 'center', marginTop: 15, color: '#0058a3' }
+    container: { flexGrow: 1, justifyContent: 'center', padding: 30, backgroundColor: '#144793' },
+    title: { fontSize: 48, fontWeight: '900', color: '#fdd20a', marginBottom: 40, letterSpacing: -2 },
+    input: { backgroundColor: '#FFF', padding: 20, marginBottom: 12, fontSize: 16, borderLeftWidth: 10, borderLeftColor: '#D80D1D', fontWeight: '600' },
+    button: { backgroundColor: '#fdd20a', padding: 20, alignItems: 'center', marginTop: 20 },
+    buttonText: { color: '#144793', fontWeight: '900', fontSize: 20, letterSpacing: 2 },
+    link: { textAlign: 'center', marginTop: 30, color: '#FFF', fontWeight: '700', textDecorationLine: 'underline' }
 });
