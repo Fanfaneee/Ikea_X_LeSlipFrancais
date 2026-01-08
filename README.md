@@ -1,50 +1,60 @@
-# Welcome to your Expo app 👋
+#  IKEA x Le Slip Français 
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Bienvenue sur le dépôt de la collaboration **IKEA x Le Slip Français**. Ce projet est un projet **étudiant**. Il est donc **fictif** et aucune des deux marques ci dessus n'a été impliqué. Cette application mobile, développée avec **Expo** et **React Native**, permet aux utilisateurs de suivre les dépôts de tissus qu'ils ont fait, en gagnant des bons d'achat pour le prochains pop-Up Store.
 
-## Get started
 
-1. Install dependencies
+## Screenshots
 
-   ```bash
-   npm install
-   ```
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
-2. Start the app
 
-   ```bash
-   npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
+##  Installation et Lancement
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 1. Prérequis
+* Node.js (v18+)
+* Expo Go sur votre smartphone (Android)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+### 2. Installation
+Clonez le dépôt et installez les dépendances :
 ```bash
-npm run reset-project
+git clone [https://github.com/Fanfaneee/Ikea_X_LeSlipFrancais.git](https://github.com/Fanfaneee/Ikea_X_LeSlipFrancais.git)
+cd Ikea_X_LeSlipFrancais
+npm install
+```
+Démarrer l'application : 
+```bash
+npx expo start
+```
+Scannez le QR code obtenu dans votre terminal avec votre téléphone.
+
+### 3. Configuration des variables d'environnement
+Créez un fichier `.env` à la racine du projet et ajoutez-y vos clés :
+```env
+
+EXPO_PUBLIC_HF_TOKEN=votre_token_hugging_face
+EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=votre_cle_google_maps
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 4.  Fonctionnalités principales
 
-## Learn more
+L'application **IKEA x Le Slip Français** combine engagement écologique et technologie pour offrir une expérience unique d'upcycling :
 
-To learn more about developing your project with Expo, look at the following resources:
+###  Gestion Utilisateur & Impact
+* **Compte Personnel** : Chaque utilisateur accède à ses données via une session sécurisée (`SecureStore`).
+* **Suivi de Matière Sauvée** : Visualisation dynamique du poids total de tissus IKEA déposés (en KG).
+* **Équivalence Textile** : Calcul automatique du nombre de vêtements "Le Slip Français" créés grâce aux dons de l'utilisateur.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+###  Sven : Assistant Intelligent (Chatbot)
+* **Accès Flottant** : Une bulle interactive représentant Sven est disponible sur la Home pour un accès instantané.
+* **Expertise Upcycling** : Sven répond à toutes les questions sur la transformation des tissus IKEA (draps, rideaux, housses).
+* **Conversation Privée** : Grâce à l'ID utilisateur, l'historique des discussions est sauvegardé localement et reste strictement personnel.
+* **Moteur IA Meta Llama 3.2** : Réponses fluides, modernes et expertes intégrées via l'API Hugging Face.
 
-## Join the community
+###  Localisation & Logistique
+* **Cartographie Interactive** : Intégration de **Google Maps** pour localiser les points de collecte et magasins IKEA participants.
+* **Parcours Donateur** : Accès rapide au QR Code personnel pour faciliter le dépôt de textile en magasin.
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+###  Design & Expérience (UX/UI)
+* **Interface Hybride** : Un mélange des codes visuels d'IKEA (Bleu/Jaune) et du Slip Français pour une identité forte.
+* **Modal de Chat Moderne** : Une interface de discussion fluide avec auto-scroll et gestion des états de chargement ("Sven écrit...").
