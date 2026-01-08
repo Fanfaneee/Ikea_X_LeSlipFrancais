@@ -10,7 +10,7 @@ interface Voucher {
     id: number;
     code: string;
     description: string;
-    is_used: number; // 0 ou 1
+    is_used: number;
     created_at: string;
 }
 
@@ -43,139 +43,122 @@ export default function VouchersScreen() {
         }
     };
 
+    const renderHeader = () => (
+        <View style={styles.headerContainer}>
+            <View style={styles.headerText}>
+                <Text style={styles.pageTitle}>MES AVANTAGES</Text>
+                <View style={styles.titleUnderline} />
+            </View>
+
+            <View style={styles.infoCard}>
+                <Text style={styles.infoTitle}>BARÈME DE COLLECTE IKEA x LSF</Text>
+                <Text style={styles.infoSub}>Récompense par dépôt effectué :</Text>
+
+                <View style={styles.rulesContainer}>
+                    <View style={styles.ruleItem}>
+                        <Ionicons name="leaf" size={18} color="#fdd20a" />
+                        <Text style={styles.ruleText}>0,5kg - 2,5kg : <Text style={styles.bold}>-5% sur le 2ème art.</Text></Text>
+                    </View>
+                    <View style={styles.ruleItem}>
+                        <Ionicons name="leaf" size={18} color="#fdd20a" />
+                        <Text style={styles.ruleText}>2,5kg - 5kg : <Text style={styles.bold}>-10% sur le 2ème art.</Text></Text>
+                    </View>
+                    <View style={styles.ruleItem}>
+                        <Ionicons name="leaf" size={18} color="#fdd20a" />
+                        <Text style={styles.ruleText}>Dès 5kg : <Text style={styles.bold}>-5% sur tout le panier</Text></Text>
+                    </View>
+                </View>
+            </View>
+            <Text style={styles.sectionTitle}>MES BONS D'ACHAT</Text>
+        </View>
+    );
+
     const renderVoucher = ({ item }: { item: Voucher }) => (
         <TouchableOpacity
             style={[styles.voucherCard, item.is_used === 1 && styles.usedVoucher]}
             onPress={() => item.is_used === 0 && setSelectedVoucher(item)}
             activeOpacity={0.8}
         >
-            {/* Barre d'accentuation à gauche - Jaune si dispo, Rouge si utilisé */}
             <View style={[styles.leftAccent, { backgroundColor: item.is_used === 1 ? '#D80D1D' : '#fdd20a' }]} />
-
             <View style={styles.cardContent}>
                 <View style={styles.textSection}>
                     <Text style={styles.codeLabel}>{item.code}</Text>
-                    <Text style={styles.descText}>{item.description}</Text>
+                    <Text style={styles.descText} numberOfLines={2}>{item.description}</Text>
                 </View>
-
                 <Ionicons
                     name={item.is_used === 1 ? "checkmark-circle" : "qr-code-outline"}
                     size={28}
                     color={item.is_used === 1 ? "#D80D1D" : "#144793"}
                 />
             </View>
-
-            {item.is_used === 1 && (
-                <View style={styles.usedBadge}>
-                    <Text style={styles.usedText}>RECYCLÉ</Text>
-                </View>
-            )}
         </TouchableOpacity>
     );
 
-    if (loading) return (
-        <View style={styles.centered}><ActivityIndicator size="large" color="#144793" /></View>
-    );
+    if (loading) return <View style={styles.centered}><ActivityIndicator size="large" color="#144793" /></View>;
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
-                {/* HEADER STYLE COLLISION */}
-                <View style={styles.header}>
-                    <Text style={styles.pageTitle}>MES AVANTAGES</Text>
-                    <View style={styles.titleUnderline} />
-                </View>
+            <FlatList
+                data={vouchers}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderVoucher}
+                ListHeaderComponent={renderHeader}
+                contentContainerStyle={styles.list}
+                showsVerticalScrollIndicator={false}
+                ListFooterComponent={<HeroFooter />}
+            />
 
-                <FlatList
-                    data={vouchers}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={renderVoucher}
-                    contentContainerStyle={styles.list}
-                    showsVerticalScrollIndicator={false}
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            <Ionicons name="shirt-outline" size={80} color="#EEE" />
-                            <Text style={styles.empty}>Rien à assembler ?</Text>
-                            <Text style={styles.emptySub}>Déposez vos tissus en magasin pour débloquer des bons d'achat IKEA x LSF.</Text>
+            <Modal visible={!!selectedVoucher} transparent={true} animationType="fade">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity style={styles.closeModal} onPress={() => setSelectedVoucher(null)}>
+                            <Ionicons name="close-circle" size={35} color="#144793" />
+                        </TouchableOpacity>
+                        <Text style={styles.modalTitle}>{selectedVoucher?.description}</Text>
+                        <View style={styles.qrWrapper}>
+                            <QRCode value={selectedVoucher?.code || "N/A"} size={180} color="#144793" />
                         </View>
-                    }
-                    ListFooterComponent={<HeroFooter />}
-                />
-
-                <Modal
-                    visible={!!selectedVoucher}
-                    transparent={true}
-                    animationType="fade"
-                    onRequestClose={() => setSelectedVoucher(null)}
-                >
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContent}>
-                            <TouchableOpacity style={styles.closeModal} onPress={() => setSelectedVoucher(null)}>
-                                <Ionicons name="close-circle" size={35} color="#144793" />
-                            </TouchableOpacity>
-
-                            <Text style={styles.modalTitle}>{selectedVoucher?.description}</Text>
-
-                            <View style={styles.qrWrapper}>
-                                <QRCode
-                                    value={selectedVoucher?.code || "N/A"}
-                                    size={200}
-                                    color="#144793"
-                                    backgroundColor="white"
-                                />
-                            </View>
-
-                            <Text style={styles.modalCode}>{selectedVoucher?.code}</Text>
-                            <Text style={styles.modalInstruction}>À présenter lors de votre passage en caisse</Text>
-                        </View>
+                        <Text style={styles.modalCode}>{selectedVoucher?.code}</Text>
+                        <Text style={styles.modalInstruction}>À scanner en caisse IKEA</Text>
                     </View>
-                </Modal>
-            </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
-    container: { flex: 1, paddingHorizontal: 25 },
+    safeArea: { flex: 1, backgroundColor: '#FDFDFD' },
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    header: { marginTop: 30, marginBottom: 20 },
-    pageTitle: { fontSize: 32, fontWeight: '900', color: '#144793', letterSpacing: -1 },
+    headerContainer: { paddingHorizontal: 25, paddingTop: 20 },
+    headerText: { marginBottom: 20 },
+    pageTitle: { fontSize: 32, fontWeight: '900', color: '#144793' },
     titleUnderline: { width: 60, height: 8, backgroundColor: '#D80D1D', marginTop: 5 },
-    list: { paddingVertical: 10 },
+    infoCard: { backgroundColor: '#144793', borderRadius: 20, padding: 20, marginBottom: 30 },
+    infoTitle: { color: '#fdd20a', fontWeight: '900', fontSize: 13 },
+    infoSub: { color: '#FFF', fontSize: 13, marginBottom: 15, opacity: 0.8 },
+    rulesContainer: { gap: 10 },
+    ruleItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    ruleText: { color: '#FFF', fontSize: 14 },
+    bold: { fontWeight: '900', color: '#fdd20a' },
+    sectionTitle: { fontSize: 18, fontWeight: '900', color: '#144793', marginBottom: 15, paddingHorizontal: 25 },
+    list: { paddingBottom: 20 },
     voucherCard: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        flexDirection: 'row',
-        marginBottom: 15,
-        alignItems: 'center',
-        overflow: 'hidden',
-        elevation: 8,
-        shadowColor: '#144793',
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        borderBottomRightRadius: 0, // Style asymétrique
-        height: 100,
+        backgroundColor: 'white', borderRadius: 20, flexDirection: 'row',
+        marginHorizontal: 25, marginBottom: 15, alignItems: 'center',
+        overflow: 'hidden', elevation: 4, height: 95
     },
-    usedVoucher: { opacity: 0.5, backgroundColor: '#FAFAFA' },
-    leftAccent: { width: 10, height: '100%' },
-    cardContent: { flex: 1, flexDirection: 'row', paddingHorizontal: 20, alignItems: 'center' },
+    usedVoucher: { opacity: 0.6 },
+    leftAccent: { width: 8, height: '100%' },
+    cardContent: { flex: 1, flexDirection: 'row', paddingHorizontal: 15, alignItems: 'center' },
     textSection: { flex: 1 },
-    codeLabel: { fontSize: 22, fontWeight: '900', color: '#144793', letterSpacing: 1 },
-    descText: { fontSize: 14, color: '#666', fontWeight: '600', marginTop: 2 },
-    usedBadge: {
-        position: 'absolute', right: 0, top: 0,
-        backgroundColor: '#D80D1D', paddingHorizontal: 12, paddingVertical: 4,
-    },
-    usedText: { color: 'white', fontSize: 10, fontWeight: '900' },
-    emptyContainer: { alignItems: 'center', marginTop: 80, paddingHorizontal: 20 },
-    empty: { fontSize: 20, fontWeight: '900', color: '#144793', marginTop: 20 },
-    emptySub: { textAlign: 'center', color: '#999', marginTop: 10, lineHeight: 20, fontWeight: '500' },
+    codeLabel: { fontSize: 18, fontWeight: '900', color: '#144793' },
+    descText: { fontSize: 13, color: '#666', fontWeight: '600', marginTop: 3 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(20, 71, 147, 0.9)', justifyContent: 'center', alignItems: 'center' },
-    modalContent: { backgroundColor: 'white', width: '85%', padding: 25, borderRadius: 30, alignItems: 'center', elevation: 20 },
-    closeModal: { alignSelf: 'flex-end', marginBottom: -10 },
-    modalTitle: { fontSize: 20, fontWeight: '800', textAlign: 'center', marginVertical: 20, color: '#144793' },
-    qrWrapper: { padding: 15, backgroundColor: 'white', borderRadius: 20, borderWidth: 1, borderColor: '#EEE' },
-    modalCode: { fontSize: 26, fontWeight: '900', color: '#144793', marginTop: 20, letterSpacing: 4 },
-    modalInstruction: { marginTop: 15, color: '#666', textAlign: 'center', fontSize: 14, fontWeight: '600' }
+    modalContent: { backgroundColor: 'white', width: '85%', padding: 25, borderRadius: 30, alignItems: 'center' },
+    closeModal: { alignSelf: 'flex-end' },
+    modalTitle: { fontSize: 18, fontWeight: '800', textAlign: 'center', marginVertical: 15, color: '#144793' },
+    qrWrapper: { padding: 10, backgroundColor: 'white', borderRadius: 15, borderWidth: 1, borderColor: '#EEE' },
+    modalCode: { fontSize: 24, fontWeight: '900', color: '#144793', marginTop: 15, letterSpacing: 3 },
+    modalInstruction: { marginTop: 10, color: '#666', fontSize: 12, fontWeight: '600' }
 });

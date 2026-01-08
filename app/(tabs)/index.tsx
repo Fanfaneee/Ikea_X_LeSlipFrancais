@@ -1,3 +1,5 @@
+import { shapes } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
 import { Ionicons } from '@expo/vector-icons';
 import { HfInference } from "@huggingface/inference";
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -15,16 +17,36 @@ import {
   TouchableOpacity, View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SvgXml } from 'react-native-svg'; // Pour afficher le SVG DiceBear
 
 const { width } = Dimensions.get('window');
 const HF_TOKEN = process.env.EXPO_PUBLIC_HF_TOKEN;
 const hf = new HfInference(HF_TOKEN);
+
+// Couleurs de la charte
+const COLORS = {
+  blue: "144793", // Bleu IKEA (sans le # pour DiceBear)
+  yellow: "fdd20a", // Jaune IKEA
+  red: "D80D1D"   // Rouge LSF
+};
 
 export default function HomeScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState({ prenom: '', total_weight: 0, avatar_url: '' });
+
+  // --- LOGIQUE GÉNÉRATION AVATAR ---
+  const avatarSvg = createAvatar(shapes, {
+    seed: userData.prenom || "Guest",
+    radius: 50,
+    backgroundColor: [COLORS.blue],
+    shape1Color: [COLORS.yellow, COLORS.red, "ffffff"],
+    shape2: ["ellipseFilled", "polygonFilled", "rectangleFilled"],
+    shape2Color: [COLORS.yellow, COLORS.red],
+    shape3: ["ellipseFilled", "polygonFilled", "rectangleFilled"],
+    shape3Color: [COLORS.yellow, "ffffff"],
+  }).toString();
 
   // --- LOGIQUE MODAL CHAT ---
   const [isChatVisible, setChatVisible] = useState(false);
@@ -36,14 +58,12 @@ export default function HomeScreen() {
   const CLOTHES_RATIO = 0.4;
   const clothesEquivalent = Math.floor(userData.total_weight / CLOTHES_RATIO);
 
-  // Mise à jour des données utilisateur au focus
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
     }, [])
   );
 
-  // Charger l'historique spécifique à l'utilisateur à l'ouverture de la modal
   useEffect(() => {
     if (isChatVisible && userId) {
       loadChatHistory(userId);
@@ -67,14 +87,13 @@ export default function HomeScreen() {
     }
   };
 
-  // --- PERSISTANCE CHAT ---
   const loadChatHistory = async (id: string) => {
     try {
       const savedChat = await SecureStore.getItemAsync(`chat_history_${id}`);
       if (savedChat) {
         setMessages(JSON.parse(savedChat));
       } else {
-        setMessages([{ role: 'assistant', content: `Hej ${userData.prenom || 'Ami'} ! Je suis Sven. Prêt à recycler tes tissus IKEA avec Le Slip Français ?` }]);
+        setMessages([{ role: 'assistant', content: `Hej ${userData.prenom || 'Ami'} ! Je suis Sven. Prêt à recycler tes tissus avec Le Slip Français ?` }]);
       }
     } catch (e) {
       console.error("Erreur chargement chat:", e);
@@ -91,10 +110,8 @@ export default function HomeScreen() {
 
   const handleSendChat = async () => {
     if (!inputText.trim() || !userId) return;
-
     const userMsg = inputText.trim();
     const newMessages = [...messages, { role: 'user' as const, content: userMsg }];
-
     setMessages(newMessages);
     setInputText('');
     setIsTyping(true);
@@ -109,10 +126,8 @@ export default function HomeScreen() {
         max_tokens: 200,
         temperature: 0.7,
       });
-
       const botText = response.choices[0].message.content || "Je n'ai pas compris...";
       const finalMessages = [...newMessages, { role: 'assistant' as const, content: botText }];
-
       setMessages(finalMessages);
       saveChatHistory(userId, finalMessages);
     } catch (error) {
@@ -127,7 +142,6 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FDFDFD' }} edges={['top']}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* HEADER */}
         <View style={styles.header}>
           <View>
             <Text style={styles.welcome}>Bienvenue,</Text>
@@ -135,13 +149,12 @@ export default function HomeScreen() {
           </View>
           <TouchableOpacity onPress={() => router.push('/profile')}>
             <View style={styles.avatarContainer}>
-              <Image
-                source={require('../../assets/images/avatar.png')} style={styles.avatar} />
+              {/* Remplacement de l'Image par le SvgXml DiceBear */}
+              <SvgXml xml={avatarSvg} width="55" height="55" />
             </View>
           </TouchableOpacity>
         </View>
 
-        {/* CARTE IMPACT */}
         <View style={styles.impactCard}>
           <View style={styles.fusionLine} />
           <Text style={styles.cardTitle}>MATIÈRE SAUVÉE</Text>
@@ -154,7 +167,6 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        {/* ACTIONS */}
         <View style={styles.actionGrid}>
           <TouchableOpacity style={styles.btnBlue} onPress={() => router.push('/profile')}>
             <Ionicons name="qr-code" size={24} color="white" />
@@ -168,61 +180,33 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      {/* --- LE BOUTON FLOTTANT SVEN AVEC BULLE CIRCULAIRE --- */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => setChatVisible(true)}
-        activeOpacity={0.8}
-      >
+      {/* BOUTON FLOTTANT SVEN */}
+      <TouchableOpacity style={styles.floatingButton} onPress={() => setChatVisible(true)} activeOpacity={0.8}>
         <View style={styles.iconCircle}>
-          <Image
-            source={require('../../assets/images/lkf_chat.png')}
-            style={styles.floatingImage}
-          />
+          <Image source={require('../../assets/images/chat_lkf.png')} style={styles.floatingImage} />
         </View>
       </TouchableOpacity>
 
-      {/* --- MODAL DU CHATBOT --- */}
+      {/* MODAL CHATBOT */}
       <Modal visible={isChatVisible} animationType="slide" transparent={true} onRequestClose={() => setChatVisible(false)}>
         <View style={styles.modalOverlay}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.modalContent}
-          >
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <View>
-                <Text style={styles.modalTitle}>SVEN ASSISTANT</Text>
-                <View style={styles.titleUnderline} />
-              </View>
+              <View><Text style={styles.modalTitle}>SVEN ASSISTANT</Text><View style={styles.titleUnderline} /></View>
               <TouchableOpacity onPress={() => setChatVisible(false)}>
                 <Ionicons name="close-circle" size={32} color="#D80D1D" />
               </TouchableOpacity>
             </View>
-
-            <ScrollView
-              ref={scrollViewRef}
-              onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-              style={styles.chatScroll}
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollView ref={scrollViewRef} onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })} style={styles.chatScroll} showsVerticalScrollIndicator={false}>
               {messages.map((msg, index) => (
                 <View key={index} style={[styles.bubble, msg.role === 'user' ? styles.userBubble : styles.botBubble]}>
-                  <Text style={[styles.msgText, msg.role === 'user' ? styles.userText : styles.botText]}>
-                    {msg.content}
-                  </Text>
+                  <Text style={[styles.msgText, msg.role === 'user' ? styles.userText : styles.botText]}>{msg.content}</Text>
                 </View>
               ))}
               {isTyping && <ActivityIndicator size="small" color="#144793" style={{ margin: 10, alignSelf: 'flex-start' }} />}
             </ScrollView>
-
             <View style={styles.inputArea}>
-              <TextInput
-                style={styles.input}
-                placeholder="Pose ta question à Sven..."
-                value={inputText}
-                onChangeText={setInputText}
-                placeholderTextColor="#999"
-              />
+              <TextInput style={styles.input} placeholder="Pose ta question à Sven..." value={inputText} onChangeText={setInputText} placeholderTextColor="#999" />
               <TouchableOpacity style={styles.sendIcon} onPress={handleSendChat}>
                 <Ionicons name="send" size={24} color="#144793" />
               </TouchableOpacity>
@@ -240,8 +224,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, marginBottom: 30 },
   welcome: { fontSize: 14, color: '#144793', fontWeight: '600', textTransform: 'uppercase' },
   name: { fontSize: 32, fontWeight: '900', color: '#D80D1D' },
-  avatarContainer: { borderWidth: 3, borderColor: '#fdd20a', borderRadius: 35, padding: 3 },
-  avatar: { width: 55, height: 55, borderRadius: 30 },
+  avatarContainer: { borderWidth: 3, borderColor: '#fdd20a', borderRadius: 35, overflow: 'hidden' }, // Ajout de overflow hidden pour le rayon de l'avatar
   impactCard: { backgroundColor: '#144793', borderRadius: 2, padding: 25, position: 'relative' },
   fusionLine: { position: 'absolute', top: 0, right: 0, width: 60, height: 60, borderRightWidth: 15, borderTopWidth: 15, borderColor: '#fdd20a' },
   cardTitle: { color: '#fdd20a', fontWeight: '900', fontSize: 18, letterSpacing: 2 },
@@ -255,36 +238,9 @@ const styles = StyleSheet.create({
   btnYellow: { flex: 1, backgroundColor: '#fdd20a', padding: 20, alignItems: 'center' },
   btnTextWhite: { color: 'white', fontWeight: '900', marginTop: 10 },
   btnTextBlue: { color: '#144793', fontWeight: '900', marginTop: 10, textAlign: 'center' },
-
-  // STYLES BOUTON FLOTTANT AVEC BULLE
-  floatingButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 20,
-    zIndex: 99,
-  },
-  iconCircle: {
-    width: 75,
-    height: 75,
-    backgroundColor: '#144793', // Fond Bleu IKEA
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#fdd20a',     // Bordure Jaune IKEA
-    elevation: 10,              // Ombre Android
-    shadowColor: '#000',        // Ombre iOS
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  floatingImage: {
-    width: 55,
-    height: 55,
-    resizeMode: 'contain'
-  },
-
-  // STYLES MODAL CHAT
+  floatingButton: { position: 'absolute', bottom: 30, right: 20, zIndex: 99 },
+  iconCircle: { width: 75, height: 75, backgroundColor: '#144793', borderRadius: 40, justifyContent: 'center', alignItems: 'center', borderWidth: 3, borderColor: '#fdd20a', elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 5 },
+  floatingImage: { width: 55, height: 55, resizeMode: 'contain' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   modalContent: { height: '85%', backgroundColor: '#FFF', borderTopLeftRadius: 40, borderTopRightRadius: 40, padding: 25 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },

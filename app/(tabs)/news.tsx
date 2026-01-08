@@ -5,14 +5,7 @@ import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, Touchabl
 const { width } = Dimensions.get('window');
 
 const NEWS_DATA = [
-    {
-        id: '1',
-        title: "LE KALSONGER FRANÇAIS",
-        excerpt: "On nous a appris que pour créer, il fallait extraire. Que pour porter du neuf, il fallait produire du neuf. Chez IKEA et Le Slip Français, nous pensons que le futur de la mode dort déjà dans vos armoires. Nous transformons le décor de votre quotidien en l'objet le plus intime : votre sous-vêtement.",
-        date: "IL Y A 15 JOURS",
-        image: "https://images.unsplash.com/photo-1626477357166-ed26f0e3f1cc?q=80&w=870&auto=format&fit=crop",
 
-    },
     {
         id: '2',
         title: "LA MODE N'A PAS BESOIN DE NAÎTRE DANS UN CHAMP.",
@@ -28,6 +21,14 @@ const NEWS_DATA = [
         date: "IL Y A 2 JOURS",
         image: "https://images.unsplash.com/photo-1517466121016-3f7e7107c756?q=80&w=870&auto=format&fit=crop",
         category: "STYLE"
+    },
+    {
+        id: '1',
+        title: "LE KALSONGER FRANÇAIS",
+        excerpt: "On nous a appris que pour créer, il fallait extraire. Que pour porter du neuf, il fallait produire du neuf. Chez IKEA et Le Slip Français, nous pensons que le futur de la mode dort déjà dans vos armoires. Nous transformons le décor de votre quotidien en l'objet le plus intime : votre sous-vêtement.",
+        date: "IL Y A 15 JOURS",
+        image: "https://images.unsplash.com/photo-1626477357166-ed26f0e3f1cc?q=80&w=870&auto=format&fit=crop",
+
     },
 ];
 
