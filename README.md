@@ -33,7 +33,7 @@ Le projet repose sur une architecture client-serveur robuste pour garantir la sy
 
 ### 1. Prérequis
 * Node.js (v18+)
-* Expo Go sur votre smartphone (Android)
+* Expo Go sur votre smartphone 
 
 ### 2. Installation
 Clonez le dépôt et installez les dépendances :
