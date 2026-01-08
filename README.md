@@ -16,9 +16,10 @@ Le projet repose sur une architecture client-serveur robuste pour garantir la sy
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-
+<div style="display: flex; flex-direction: row; gap: 10px;">
+  <img src="assets/images/page_accueil.jpg" width="300" alt="Page Accueil" />
+  <img src="assets/images/page_avantage_full.jpg" width="300" alt="Page Avantages" />
+</div>
 
 ##  Installation et Lancement
 
