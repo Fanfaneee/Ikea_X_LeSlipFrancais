@@ -24,6 +24,8 @@ Le projet repose sur une architecture client-serveur robuste pour garantir la sy
    <img src="assets/images/page_avantage_full.jpg" width="300" alt="Page Avantages" />
    <img src="assets/images/page_map.jpg" width="300" alt="Page Map" />
    <img src="assets/images/page_map_ikea.jpg" width="300" alt="Page Map " />
+   <img src="assets/images/page_actus.jpg" width="300" alt="Page Actus " />
+
 
 </div>
 
